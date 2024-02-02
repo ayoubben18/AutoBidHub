@@ -13,13 +13,12 @@ public class SeedData
     public static void EnsureSeedData(WebApplication app)
     {
         using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
         context.Database.Migrate();
 
         var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-        if (userMgr.Users.Any())
-            return;
+        if (userMgr.Users.Any()) return;
 
         var alice = userMgr.FindByNameAsync("alice").Result;
         if (alice == null)
@@ -36,12 +35,9 @@ public class SeedData
                 throw new Exception(result.Errors.First().Description);
             }
 
-            result = userMgr
-                .AddClaimsAsync(
-                    alice,
-                    new Claim[] { new Claim(JwtClaimTypes.Name, "Alice Smith"), }
-                )
-                .Result;
+            result = userMgr.AddClaimsAsync(alice, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                        }).Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
@@ -68,9 +64,9 @@ public class SeedData
                 throw new Exception(result.Errors.First().Description);
             }
 
-            result = userMgr
-                .AddClaimsAsync(bob, new Claim[] { new Claim(JwtClaimTypes.Name, "Bob Smith"), })
-                .Result;
+            result = userMgr.AddClaimsAsync(bob, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Bob Smith"),
+                        }).Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);

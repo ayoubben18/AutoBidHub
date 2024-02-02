@@ -27,14 +27,17 @@ namespace IdentityService.Pages.Register
 
         public IActionResult OnGet(string returnUrl)
         {
-            Input = new RegisterViewModel { ReturnUrl = returnUrl, };
+            Input = new RegisterViewModel
+            {
+                ReturnUrl = returnUrl,
+            };
+
             return Page();
         }
 
         public async Task<IActionResult> OnPost()
         {
-            if (Input.Button != "register")
-                return Redirect("~/");
+            if (Input.Button != "register") return Redirect("~/");
 
             if (ModelState.IsValid)
             {
@@ -42,19 +45,22 @@ namespace IdentityService.Pages.Register
                 {
                     UserName = Input.Username,
                     Email = Input.Email,
-                    EmailConfirmed = true,
+                    EmailConfirmed = true
                 };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
                 if (result.Succeeded)
                 {
-                    await _userManager.AddClaimsAsync(
-                        user,
-                        new Claim[] { new Claim(JwtClaimTypes.Name, Input.FullName) }
-                    );
+                    await _userManager.AddClaimsAsync(user, new Claim[]
+                    {
+                        new Claim(JwtClaimTypes.Name, Input.FullName)
+                    });
+
                     RegisterSuccess = true;
                 }
             }
+
             return Page();
         }
     }

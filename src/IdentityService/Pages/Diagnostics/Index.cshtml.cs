@@ -1,6 +1,3 @@
-// Copyright (c) Duende Software. All rights reserved.
-// See LICENSE in the project root for license information.
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,20 +9,21 @@ namespace IdentityService.Pages.Diagnostics;
 [Authorize]
 public class Index : PageModel
 {
-    public ViewModel View { get; set; } = default!;
+    public ViewModel View { get; set; }
 
     public async Task<IActionResult> OnGet()
     {
-        var localAddresses = new List<string> { "127.0.0.1", "::1" };
-        if (HttpContext.Connection.LocalIpAddress != null)
+        var localAddresses = new string[]
         {
-            localAddresses.Add(HttpContext.Connection.LocalIpAddress.ToString());
+            "::ffff:172.20.0.1",
+            "127.0.0.1",
+            "::1",
+            HttpContext.Connection.LocalIpAddress.ToString()
+        };
+        if (!localAddresses.Contains(HttpContext.Connection.RemoteIpAddress.ToString()))
+        {
+            return NotFound();
         }
-
-        // if (!localAddresses.Contains(HttpContext.Connection.RemoteIpAddress?.ToString()))
-        // {
-        //     return NotFound();
-        // }
 
         View = new ViewModel(await HttpContext.AuthenticateAsync());
 

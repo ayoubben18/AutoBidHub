@@ -19,8 +19,12 @@ public class CustomProfileService : IProfileService
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var user = await _userManager.GetUserAsync(context.Subject);
-        var existingClaims = await _userManager.GetClaimsAsync(user);
-        var claims = new List<Claim> { new Claim("username", user.UserName) };
+        var existingClaims = await _userManager.GetClaimsAsync(user);   
+
+        var claims = new List<Claim>
+        {
+            new Claim("username", user.UserName)
+        };
 
         context.IssuedClaims.AddRange(claims);
         context.IssuedClaims.Add(existingClaims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name));

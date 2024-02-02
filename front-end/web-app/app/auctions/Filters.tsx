@@ -29,6 +29,7 @@ const Filters = () => {
         <ButtonGroup className="gap-x-1">
           {filterButtons.map(({ label, icon: Icon, value }) => (
             <button
+              key={label}
               className={`btn btn-sm gap-1 text-white ${
                 filterBy === value ? " btn-error " : " btn-outline btn-error "
               }`}
@@ -46,6 +47,7 @@ const Filters = () => {
         <ButtonGroup className="gap-x-1">
           {orderButtons.map(({ label, icon: Icon, value }) => (
             <button
+              key={label}
               className={`btn btn-sm gap-1 text-white ${
                 orderBy === value ? " btn-error " : " btn-outline btn-error "
               }`}
