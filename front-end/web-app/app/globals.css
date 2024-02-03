@@ -6,3 +6,7 @@
 :root,html,body{
   overflow-x: hidden;
 }
+
+.react-datepicker-wrapper{
+  width: 100%;
+}

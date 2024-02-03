@@ -1,8 +1,11 @@
 "use client";
 import { useParamsStore } from "@/hooks/useParamsStore";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const Search = () => {
+  const router = useRouter();
+  const pathname = usePathname();
   const setParams = useParamsStore((state) => state.setParams);
   const setSearchValue = useParamsStore((state) => state.setSearchValue);
   const searchValue = useParamsStore((state) => state.searchValue);
@@ -12,6 +15,7 @@ const Search = () => {
     setSearchValue(event.target.value);
   }
   function search() {
+    if (pathname !== "/") router.push("/");
     setParams({ searchTerm: searchValue });
   }
   return (

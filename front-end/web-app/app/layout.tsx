@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./nav/NavBar";
 import QueryProvider from "./providers/QueryProvider";
+import "@uploadthing/react/styles.css";
+import ToasterProvider from "./providers/ToasterProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +22,7 @@ export default function RootLayout({
     <html lang="en" data-theme="dark">
       <body className={inter.className}>
         <QueryProvider>
+          <ToasterProvider />
           <NavBar />
           {children}
         </QueryProvider>

@@ -26,7 +26,7 @@ const Filters = () => {
       <div>
         {" "}
         <span className=" uppercase text-sm text-gray-500 mr-2"> Order By</span>
-        <ButtonGroup className="gap-x-1">
+        <div className=" flex gap-2">
           {filterButtons.map(({ label, icon: Icon, value }) => (
             <button
               key={label}
@@ -39,12 +39,12 @@ const Filters = () => {
               {label}
             </button>
           ))}
-        </ButtonGroup>
+        </div>
       </div>
       <div>
         {" "}
         <span className=" uppercase text-sm text-gray-500 mr-2"> Order By</span>
-        <ButtonGroup className="gap-x-1">
+        <div className="flex gap-2">
           {orderButtons.map(({ label, icon: Icon, value }) => (
             <button
               key={label}
@@ -57,11 +57,11 @@ const Filters = () => {
               {label}
             </button>
           ))}
-        </ButtonGroup>
+        </div>
       </div>
       <div>
         <span className=" uppercase text-sm text-gray-500 mr-2">Page Size</span>
-        <ButtonGroup className="gap-x-1">
+        <div className="flex gap-2">
           {pageSizeButtons.map((value, index) => (
             <button
               className={`btn btn-square btn-sm ${
@@ -73,7 +73,7 @@ const Filters = () => {
               {value}
             </button>
           ))}
-        </ButtonGroup>
+        </div>
       </div>
     </div>
   );

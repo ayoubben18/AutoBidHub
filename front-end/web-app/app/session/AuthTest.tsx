@@ -1,7 +1,7 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
-import { UpdateAuctionTest } from "../actions/auctionActions";
+import { updateAuction } from "../actions/auctionActions";
 import { useRouter } from "next/navigation";
 
 const AuthTest = () => {
@@ -11,8 +11,9 @@ const AuthTest = () => {
     isPending,
     data,
   } = useMutation({
-    mutationFn: UpdateAuctionTest,
+    mutationFn: updateAuction,
   });
+  console.log(process.env.GATEWAY_URL);
 
   return (
     <div>
