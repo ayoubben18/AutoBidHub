@@ -15,7 +15,7 @@ export const createAuction = async (data: FieldValues) => {
 
 export const updateAuction = async (data: FieldValues) => {
   const res = await fetchWrapper.put(`auctions/${data.id}`, data);
-  revalidatePath(`/auctions/${data.id}`);
+  revalidatePath(`auctions/${data.id}`);
   return res;
 };
 export const getDetailedViewData = async (id: string): Promise<Auction> => {
@@ -23,5 +23,7 @@ export const getDetailedViewData = async (id: string): Promise<Auction> => {
 };
 
 export const deleteAuction = async (id: string) => {
-  return await fetchWrapper.remove(`auctions/${id}`);
+  const res = await fetchWrapper.remove(`auctions/${id}`);
+  revalidatePath(`auctions/${id}`);
+  return res;
 };
