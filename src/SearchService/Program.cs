@@ -14,6 +14,7 @@ builder.Services.AddHttpClient<AuctionServiceHttpClient>().AddPolicyHandler(GetP
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
+    x.AddConsumersFromNamespaceContaining<BidPlacedConsumer>();
     // x.AddConsumersFromNamespaceContaining<AuctionUpdatedConsumer>();
     // x.AddConsumersFromNamespaceContaining<AuctionDeletedConsumer>();
 

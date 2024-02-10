@@ -3,12 +3,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { deleteAuction } from "../actions/auctionActions";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 interface Props {
   id: string;
 }
 const DeleteAuctionButton = ({ id }: Props) => {
-  const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: deleteAuction,
     onSuccess: (res) => {
@@ -17,7 +16,7 @@ const DeleteAuctionButton = ({ id }: Props) => {
         toast.error(res.error.status + " : " + res.error.message);
       } else {
         toast.success("Successfully Deleted!");
-        router.push("/");
+        redirect("/");
       }
     },
   });
