@@ -6,7 +6,7 @@ import { UploadDropzone } from "@/utils/uploadthing";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import DateInput from "../components/DateInput";
 import { createAuction, updateAuction } from "../actions/auctionActions";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter} from "next/navigation";
 import toast from "react-hot-toast";
 import { Auction } from "@/types";
 
@@ -181,7 +181,11 @@ const AuctionForm = ({ auction }: Props) => {
       )}
 
       <div className=" flex justify-between">
-        <button className="btn rounded-lg btn-outline btn-secondary">
+        <button className="btn rounded-lg btn-outline btn-secondary" type="button" onClick={()=> {
+
+          if (pathname === '/auctions/create') router.push('/');
+          else router.push(`/auctions/details/${auction?.id}`)
+        }}>
           Cancel
         </button>
         <button

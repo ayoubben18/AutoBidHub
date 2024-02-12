@@ -1,4 +1,4 @@
-import { getDetailedViewData } from "@/app/actions/auctionActions";
+import {getBidsForAuction, getDetailedViewData} from "@/app/actions/auctionActions";
 import Heading from "@/app/components/Heading";
 import React from "react";
 import CountdownTimer from "../../CountdownTimer";
@@ -11,6 +11,7 @@ import DeleteAuctionButton from "../../DeleteAuctionButton";
 const page = async ({ params }: { params: { id: string } }) => {
   const data = await getDetailedViewData(params.id);
   const user = await getCurrentUser();
+  const bids = await getBidsForAuction(params.id);
   return (
     <div className=" p-10">
       <div className=" flex justify-between flex-wrap gap-4">
@@ -37,6 +38,11 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
         <div className=" border-2 rounded-lg p-2 bg-gray-100">
           <Heading title="Bids" />
+            {bids.map((bid) => (
+                <div key={bid.id}>
+                    {bid.amount} - {bid.bidder}
+                </div>
+            ))}
         </div>
       </div>
       <div className=" mt-3 grid grid-cols-1">
