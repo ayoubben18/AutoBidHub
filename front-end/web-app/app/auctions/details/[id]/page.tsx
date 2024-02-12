@@ -1,4 +1,4 @@
-import {getBidsForAuction, getDetailedViewData} from "@/app/actions/auctionActions";
+import { getDetailedViewData} from "@/app/actions/auctionActions";
 import Heading from "@/app/components/Heading";
 import React from "react";
 import CountdownTimer from "../../CountdownTimer";
@@ -7,11 +7,12 @@ import DetailedSpecs from "./DetailedSpecs";
 import Link from "next/link";
 import { getCurrentUser } from "@/app/actions/authActions";
 import DeleteAuctionButton from "../../DeleteAuctionButton";
+import {BidList} from "@/app/auctions/details/[id]/BidList";
+import {BidForm} from "@/app/auctions/details/[id]/BidForm";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const data = await getDetailedViewData(params.id);
   const user = await getCurrentUser();
-  const bids = await getBidsForAuction(params.id);
   return (
     <div className=" p-10">
       <div className=" flex justify-between flex-wrap gap-4">
@@ -32,18 +33,12 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-6 mt-3">
+      <div className=" grid grid-cols-1 2xl:grid-cols-2 gap-6 mt-3">
         <div className=" w-full bg-gray-200 aspect-h-10 aspect-w-16 rounded-lg overflow-hidden">
           <CarImage image={data.imageUrl} />
         </div>
-        <div className=" border-2 rounded-lg p-2 bg-gray-100">
-          <Heading title="Bids" />
-            {bids.map((bid) => (
-                <div key={bid.id}>
-                    {bid.amount} - {bid.bidder}
-                </div>
-            ))}
-        </div>
+        <BidList user={user!} auction={data}/>
+
       </div>
       <div className=" mt-3 grid grid-cols-1">
         <DetailedSpecs auction={data} />

@@ -44,6 +44,7 @@ const Listings = () => {
         queryFn: async () => {
             const  res = await getData(url);
             setData(res);
+            return res;
         },
         retry: true,
     });

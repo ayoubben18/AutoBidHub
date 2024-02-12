@@ -31,3 +31,10 @@ export const deleteAuction = async (id: string) => {
 export async function getBidsForAuction(id:string):Promise<Bid[]>{
   return await fetchWrapper.get(`bids/${id}`);
 }
+type Props = {
+  auctionId: string;
+  amount:number;
+};
+export async function placeBidForAuction({auctionId, amount}:Props){
+  return await fetchWrapper.post(`bids?auctionId=${auctionId}&amount=${amount}`,{});
+}
