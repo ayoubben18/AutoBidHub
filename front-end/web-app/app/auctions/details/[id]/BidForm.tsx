@@ -28,13 +28,19 @@ export const BidForm = ({auctionId, highBid}: Props) => {
     })
 
     function onSubmit(data: FieldValues) {
-        mutate({auctionId,amount:+data.amount});
+        if (data.amount > highBid) {
+            mutate({auctionId, amount: +data.amount});
+        } else {
+            toast.error('Please enter an amount bigger than the current high bid', {duration: 5000});
+            reset();
+        }
     }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex items-center border-2 gap-1
         rounded-lg py-2">
-            <input type='number' {...register('amount')} placeholder={`Enter your bids (minimum bid is ${highBid})`} className="input input-bordered input-accent w-full "/>
+            <input type='number' {...register('amount')} placeholder={`Enter your bids (minimum bid is ${highBid})`}
+                   className="input input-bordered input-accent w-full "/>
             <button disabled={isPending} className='btn btn-outline'>Add</button>
         </form>
     );

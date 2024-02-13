@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
     "@tanstack/react-query": "^5.18.0",
     "@uploadthing/react": "^6.2.2",
     "date-fns": "^3.3.1",

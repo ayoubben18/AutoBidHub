@@ -7,7 +7,7 @@ import {getBidsForAuction} from "@/app/actions/auctionActions";
 import toast from "react-hot-toast";
 import Heading from "@/app/components/Heading";
 import {BidItem} from "@/app/auctions/details/[id]/BidItem";
-import React from "react";
+import React, {useEffect} from "react";
 import {User} from "next-auth";
 import {BidForm} from "@/app/auctions/details/[id]/BidForm";
 import {numberWithCommas} from "@/app/lib/numberWithComma";
@@ -20,7 +20,9 @@ type Props = {
 export const BidList = ({user, auction}: Props) => {
 
     const {bids, setBids} = useBidStore();
-    const highBid = bids.reduce((prev, current) => prev > current.amount ? prev : current.amount, 0);
+    const {open, setOpen} = useBidStore();
+    const openForBids = new Date(auction.auctionEnd) > new Date();
+    const highBid = bids.reduce((prev, current) => prev > current.amount ? prev : current.bidStatus.includes('Accepted') ? current.amount : prev, 0);
 
     const {isLoading} = useQuery({
         queryKey: ['bids'],
@@ -36,6 +38,9 @@ export const BidList = ({user, auction}: Props) => {
 
         },
     })
+    useEffect(() => {
+        setOpen(openForBids);
+    }, [openForBids, setOpen]);
     if (isLoading) return <span className="loading loading-ring loading-lg self-center justify-self-center"></span>;
     return (
         <div className=" shadow-md rounded-lg">
@@ -59,17 +64,20 @@ export const BidList = ({user, auction}: Props) => {
                 )}
             </div>
             <div>
-                {!user ?
-                    <div className=' flex items-center justify-center p-2 text-lg font-semibold'>
-                        Please login to be able to make a bid
-                    </div>
-                    : user && user.username === auction.seller ? (
+                {!open ? (<div className=' flex items-center justify-center p-2 text-lg font-semibold'>
+                        This Auction Has finished
+                    </div>) :
+                    !user ?
                         <div className=' flex items-center justify-center p-2 text-lg font-semibold'>
-                            You cannot bid on your own auction
+                            Please login to be able to make a bid
                         </div>
-                    ) : (
-                        <BidForm auctionId={auction.id} highBid={highBid}/>
-                    )
+                        : user && user.username === auction.seller ? (
+                            <div className=' flex items-center justify-center p-2 text-lg font-semibold'>
+                                You cannot bid on your own auction
+                            </div>
+                        ) : (
+                            <BidForm auctionId={auction.id} highBid={highBid}/>
+                        )
                 }</div>
         </div>
     );
