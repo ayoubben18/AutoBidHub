@@ -1,3 +1,8 @@
+networks:
+  custom:
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 services:
   postgres:
     image: postgres
@@ -7,6 +12,8 @@ services:
       - 5432:5432
     volumes:
       - /var/lib/postgresql/data
+    networks:
+      custom:
   mongodb:
     image: mongo
     environment:
@@ -16,14 +23,18 @@ services:
       - 27017:27017
     volumes:
       - /var/lib/mongodb/data
+    networks:
+      custom:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      custom:
   auction-svc:
     image: dockerelite/auction-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/AuctionService/DockerFile
     environment:
@@ -43,9 +54,11 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    networks:
+      custom:
   search-svc:
     image: dockerelite/search-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/SearchService/DockerFile
     environment:
@@ -59,32 +72,39 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+    networks:
+      custom:
   identity-svc:
     image: dockerelite/identity-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/IdentityService/DockerFile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
+      - ClientApp=http://app.autobidhub.com
       - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=postgrespass;Database=identity
-    ports:
-      - 5000:80
+      - VIRTUAL_HOST=id.autobidhub.com
     depends_on:
       - postgres
+    networks:
+      custom:
+        ipv4_address: 10.5.0.200
   gateway-svc:
     image: dockerelite/gateway-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/GatewayService/DockerFile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
-    ports:
-      - 6001:80
+      - ClientApp=https://app.autobidhub.com
+      - VIRTUAL_HOST=api.autobidhub.com
+    networks:
+      custom:
   bid-svc:
     image: dockerelite/bid-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/BiddingService/DockerFile
     environment:
@@ -99,9 +119,11 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+    networks:
+      custom:
   notify-svc:
     image: dockerelite/notify-svc:latest
-    build: 
+    build:
       context: .
       dockerfile: src/NotificationService/DockerFile
     environment:
@@ -112,3 +134,39 @@ services:
       - 7004:80
     depends_on:
       - rabbitmq
+    networks:
+      custom:
+  web-app:
+    image: dockerelite/web-app
+    build:
+      context: .
+      dockerfile: front-end/web-app/Dockerfile
+    volumes:
+      - /var/lib/web/data
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - id.autobidhub.com:10.5.0.200
+    environment:
+      - NEXTAUTH_SECRET=ayoub
+      - NEXTAUTH_URL=http://app.autobidhub.com
+      - NEXTAUTH_URL_INTERNAL=http://web-app:3000
+      - UPLOADTHING_SECRET=sk_live_c0dd68cd3a641b2f0383b875540c21d7947ce38b3494e7228693013133548249
+      - UPLOADTHING_APP_ID=zg7v6ng2ej
+      - GATEWAY_URL=http://gateway-svc/
+      - DUENDE_URL=http://id.autobidhub.com
+      - NEXT_PUBLIC_NOTIF_URL=http://gateway-svc/notifications
+      - VIRTUAL_HOST=app.autobidhub.com
+      - VIRTUAL_PORT=3000
+    networks:
+      custom:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      custom:
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./devcerts:/etc/nginx/certs

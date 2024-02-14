@@ -19,9 +19,10 @@ export const SignalRProvider = ({children, user}: Props) => {
     const [connection, setConnection] = useState<HubConnection | null>()
     const {setCurrentPrice} = useAuctionStore();
     const {addBid} = useBidStore();
+    const apiUrl = process.env.NODE_ENV === 'production' ? 'https://api.autobidhub.com/notifications' : process.env.NEXT_PUBLIC_NOTIF_URL;
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl('http://localhost:6001/notifications')
+            .withUrl(apiUrl!)
             .withAutomaticReconnect().build();
         setConnection(newConnection);
     }, []);
@@ -50,7 +51,7 @@ export const SignalRProvider = ({children, user}: Props) => {
                         loading: 'Loading...',
                         success: (auction) => <AuctionFinishedToast finishedAuction={finishedAuction}
                                                                     auction={auction}/>,
-                        error: err => 'Auction Finished !',
+                        error: _ => 'Auction Finished !',
                     }, {success: {duration: 6000, icon: null}})
                 })
             }).catch(error => console.log(error));
@@ -59,7 +60,7 @@ export const SignalRProvider = ({children, user}: Props) => {
         return () => {
             connection?.stop();
         }
-    }, [connection, setCurrentPrice]);
+    }, [connection, setCurrentPrice, addBid, user?.username]);
 
     return (
         children
